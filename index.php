@@ -68,10 +68,10 @@ function getPartsFromFullname($string) {
     return $fullnameParts;
 }
 
-$fullnamePart = getPartsFromFullname($example_persons_array[7]['fullname']);
+/*$fullnamePart = getPartsFromFullname($example_persons_array[7]['fullname']);
 
 print_r($fullnamePart);
-echo "<br/>";
+echo "<br/>";*/
 
 function getFullnameFromParts($surname, $name, $patronamyc) {
     $fullname = $surname . " " . $name . " " . $patronamyc;
@@ -79,20 +79,23 @@ function getFullnameFromParts($surname, $name, $patronamyc) {
     return $fullname;
 }
 
-getFullnameFromParts($fullnamePart['surname'], $fullnamePart['name'], $fullnamePart['patronamyc']);
+//getFullnameFromParts($fullnamePart['surname'], $fullnamePart['name'], $fullnamePart['patronamyc']);
 
 function getShortName($string) {
     $fullNameFromParts = getPartsFromFullname($string);
     unset($fullNameFromParts['patronamyc']);
-    $fullNameFromParts['surname'] = mb_substr($fullNameFromParts['surname'], 0, 4);
-    $fullNameFromParts['name'] = mb_substr($fullNameFromParts['name'], 0, 1) . ".";
-    $fullNameShort = $fullNameFromParts['surname'] . " " . $fullNameFromParts['name'];
+    $fullNameFromParts['surname'] = mb_substr($fullNameFromParts['surname'], 0, 1) . ".";
+    $fullNameShort = $fullNameFromParts['name'] . " " . $fullNameFromParts['surname'];
     echo "<br/>";
     echo $fullNameShort;
     return $fullNameShort;
 }
 
-getShortName($example_persons_array[10]['fullname']);
+/* $length = count($example_persons_array);
+
+for ($i = 0; $i < $length; $i++) {
+    getShortName($example_persons_array[$i]['fullname']);
+} */
 
 function getGenderFromName($string) {
 
@@ -128,10 +131,10 @@ function getGenderFromName($string) {
 
 }
 
-$gender = getGenderFromName($example_persons_array[8]['fullname']);
+/* $gender = getGenderFromName($example_persons_array[8]['fullname']);
 echo "<br/>";
 echo $gender;
-echo "<br/>";
+echo "<br/>"; */
 
 function getGenderDescription ($array) {
 
@@ -174,16 +177,23 @@ function getGenderDescription ($array) {
 
 }
 
-getGenderDescription($example_persons_array);
+//getGenderDescription($example_persons_array);
 
 $surname = "АнтОнова";
 $name = "АННА";
 $patronymic = "МихайЛОВНА";
+
 $str = "";
 
 
 function random_float($min, $max) {
     return random_int($min, $max - 1) + (random_int(0, PHP_INT_MAX - 1) / PHP_INT_MAX );
+}
+
+function upFirstLetter($str, $encoding = 'UTF-8')
+{
+return mb_strtoupper(mb_substr($str, 0, 1, $encoding), $encoding)
+. mb_substr($str, 1, null, $encoding);
 }
 
 function getPerfectPartner($surname, $name, $patronymic, $array) {
@@ -192,19 +202,13 @@ function getPerfectPartner($surname, $name, $patronymic, $array) {
     $name = mb_strtolower($name);
     $patronymic = mb_strtolower($patronymic);
 
-    function upFirstLetter($str, $encoding = 'UTF-8')
-    {
-    return mb_strtoupper(mb_substr($str, 0, 1, $encoding), $encoding)
-    . mb_substr($str, 1, null, $encoding);
-    }
-
     $surname = upFirstLetter($surname);
     $name = upFirstLetter($name);
     $patronymic = upFirstLetter($patronymic);
 
-    echo "<br/>";
+    /*echo "<br/>";
     echo $surname, $name, $patronymic; 
-    echo "<br/>";
+    echo "<br/>";*/
 
     $fullname = getFullnameFromParts($surname, $name, $patronymic);
 
@@ -222,13 +226,19 @@ function getPerfectPartner($surname, $name, $patronymic, $array) {
     echo "<br/>";
     print_r($genderRandom);
 
-    if ($genderRandom == -$gender) {
+    if ($gender == 0) {
+        echo "<br/>";
+        echo "\u{1F615}Невозможно подобрать пару, т.к. пол не определен\u{1F615}";
+        echo "<br/>";
+    } 
+    elseif ($genderRandom == -$gender) {
         $genderRandomShort = getShortName($fullnameRandom);
         $genderShort = getShortName($fullname);
         $percent = round(random_float(50, 100),2);
         echo "<br/>";
         echo "$genderRandomShort + $genderShort =<br/>
         \u{2661} Идеально на $percent% \u{2661}";
+        echo "<br/>";
     } else {
         goto genderRandom; 
     }
@@ -236,7 +246,22 @@ function getPerfectPartner($surname, $name, $patronymic, $array) {
     
 }
 
-getPerfectPartner($surname, $name, $patronymic, $example_persons_array);
+
+// getPerfectPartner($surname, $name, $patronymic, $example_persons_array);
+
+$length = count($example_persons_array);
+
+for ($i = 0; $i < $length; $i++) {
+
+    $fullnamePart = getPartsFromFullname($example_persons_array[$i]['fullname']);
+
+    $surname = $fullnamePart['surname'];
+    $name = $fullnamePart['name'];
+    $patronymic = $fullnamePart['patronamyc'];
+
+    getPerfectPartner($surname, $name, $patronymic, $example_persons_array);
+
+}
 
 ?>
 </body>
